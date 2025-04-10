@@ -1,6 +1,6 @@
 # DemoDjango
 ## Model: 
- - Xây dựng model user, task, project, Assign, model base
+ - Xây dựng model User, Task, Project, Assign, model base
  - Xây dựng các mối quan hệ giữa các model
  - Kết nối model với database (sqlserver)
 ## Admin:
