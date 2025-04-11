@@ -18,11 +18,13 @@ from rest_framework import routers
 from django.contrib import admin
 from django.urls import path, include
 from task.views import get_all, get_by_id, create, update, delete, getAssigned, getTask, TaskAPIView
-from user.views import UserViewSet, AssignViewSet
+from user.views import UserViewSet, AssignViewSet, AuthViewSet, CustomTokenObtainPairView
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
 router = routers.DefaultRouter()
 router.register('user', UserViewSet, basename='user')
 router.register('assign', AssignViewSet, basename='assign')
+router.register('auth', AuthViewSet, basename='auth')
 
 urlpatterns = [
     # project api using function-based view
@@ -34,7 +36,15 @@ urlpatterns = [
     path('api/project/delete/<int:id>', delete),
     path('api/project/getAssigned/<int:id>', getAssigned),
     path('api/project/getTask/<int:id>', getTask),
+
+    # task api using class-based view
     path('api/task', TaskAPIView.as_view(), name='task-list'),
     path('api/task/<int:id>', TaskAPIView.as_view(), name='task-detail'),
-    path('api/', include(router.urls))
+
+    # user, assign api using class-based view
+    path('api/', include(router.urls)),
+
+    # authen, author
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),   #lấy lại access token khi hết hạn
 ]

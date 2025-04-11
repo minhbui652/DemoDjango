@@ -1,7 +1,8 @@
 from django.core.serializers import serialize
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models.Assign import Assign
@@ -44,6 +45,7 @@ def get_by_id(request, id):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create(request):
     try:
         serialize = ProjectSerializer(data=request.data)
@@ -55,6 +57,7 @@ def create(request):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update(request):
     try:
         query = Project.objects.get(id=request.data['id'])
@@ -69,6 +72,7 @@ def update(request):
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete(request, id):
     try:
         query = Project.objects.get(id=id)
@@ -127,6 +131,8 @@ def getTask(request, id):
 CRUD TASK với class base view (APIView)
 '''
 class TaskAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         try:
             tasks = Task.objects.all()
