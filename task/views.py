@@ -48,7 +48,8 @@ def get_by_id(request, id):
 @permission_classes([IsAuthenticated])
 def create(request):
     try:
-        serialize = ProjectSerializer(data=request.data)
+        print(request.data)
+        serialize = ProjectSerializer(data=request.data, context={'request': request})
         if serialize.is_valid():
             serialize.save()
             return Response(serialize.data, status=status.HTTP_201_CREATED)

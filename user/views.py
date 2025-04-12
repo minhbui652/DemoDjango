@@ -68,8 +68,9 @@ class UserViewSet(viewsets.ModelViewSet):
         query = User.objects.filter(username=request.data['username'])
         if query.exists():
             return Response({'error': 'Username already exists'}, status=400)
-
-        serializer = UserSerializer(data=request.data, context={'request': request})
+        data = request.data.copy()
+        data['password'] = make_password(request.data['password'])
+        serializer = UserSerializer(data=data, context={'request': request})
 
         if not serializer.is_valid():
             print(serializer.errors)

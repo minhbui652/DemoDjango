@@ -36,6 +36,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTH_USER_MODEL = 'user.User'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -158,8 +160,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
-
-AUTH_USER_MODEL = 'user.User'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),

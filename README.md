@@ -12,3 +12,10 @@
    - Function base view (FBV) api cho model project
    - Sử dụng APIView cho model task
    - Sử dụng ViewSet cho model assign
+## Serializer:
+ - Sử dụng serializer để chuyển đổi dữ liệu giữa model và json
+ - Tạo serializer cho các model
+ - Sử dụng serializer để validate dữ liệu đầu vào
+## Authentication:
+ - Sử dụng token authentication để xác thực người dùng
+ - Sử dụng permission để phân quyền cho người dùng
