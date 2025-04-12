@@ -20,6 +20,31 @@ class UserSerializer(serializers.ModelSerializer):
             'is_staff': {'required': False},
         }
 
+    def validate(self, attrs):
+        """
+        Validate email format
+        """
+        print('context: ', self.context)  # Kiểm tra context
+
+        email = attrs.get('email')
+        request = self.context.get('request')  # Lấy request từ context
+
+        # Kiểm tra nếu là POST
+        if request and request.method == 'POST':
+            # Kiểm tra email đã tồn tại trong cơ sở dữ liệu chưa
+            if User.objects.filter(email=email).exists():
+                raise serializers.ValidationError("Email already exists.")
+            # Kiểm tra xem email có hợp lệ không
+            if not email or '@' not in email:
+                raise serializers.ValidationError("Email is required and must be valid.")
+
+        # Kiểm tra nếu là PUT hoặc PATCH
+        elif request and request.method in ['PUT', 'PATCH']:
+            if not email or '@' not in email:
+                raise serializers.ValidationError("Email is required and must be valid.")
+
+        return attrs
+
 class AssignSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assign

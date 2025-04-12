@@ -28,3 +28,22 @@ class ProjectSerializer(serializers.ModelSerializer):
             'title': {'required': True},
             'description': {'required': False},
         }
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        print('context:', request.method)
+        if request and request.method == 'POST':
+            if not Project.objects.filter(id = attrs.get('id', None)).exists():
+                raise serializers.ValidationError("Project with this ID not exists.")
+            if not attrs.get('title', None):
+                raise serializers.ValidationError("Project title is required.")
+        elif request and request.method in ['PATCH', 'PUT']:
+            print('request method: ', request.method)
+            if Project.objects.filter(id = attrs.get('id', None)).exists():
+                raise serializers.ValidationError("Project with this ID already exists.")
+            if not attrs.get('title', None):
+                raise serializers.ValidationError("Project title is required.")
+        elif request and request.method == 'GET':
+            pass
+
+        return attrs

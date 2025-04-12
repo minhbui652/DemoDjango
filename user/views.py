@@ -68,17 +68,14 @@ class UserViewSet(viewsets.ModelViewSet):
         query = User.objects.filter(username=request.data['username'])
         if query.exists():
             return Response({'error': 'Username already exists'}, status=400)
-        user = User(
-            username=request.data['username'],
-            email=request.data['email'],
-            password=make_password(request.data['password']),
-            first_name=request.data['first_name'],
-            last_name=request.data.get('last_name', None),
-            is_active=request.data.get('is_active', True),
-            is_staff=request.data.get('is_staff', False)
-        )
-        user.save()
-        serializer = UserSerializer(user)
+
+        serializer = UserSerializer(data=request.data, context={'request': request})
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response(serializer.errors, status=400)  # Trả về lỗi nếu dữ liệu không hợp lệ
+
+        serializer.save()
         return Response(serializer.data, status=201)
 
 class AssignViewSet(viewsets.ModelViewSet):

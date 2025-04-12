@@ -52,7 +52,6 @@ def create(request):
         if serialize.is_valid():
             serialize.save()
             return Response(serialize.data, status=status.HTTP_201_CREATED)
-        return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST, data={'error': 'Invalid data'})
     except Exception as e:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 
@@ -61,15 +60,13 @@ def create(request):
 def update(request):
     try:
         query = Project.objects.get(id=request.data['id'])
-        serializer = ProjectSerializer(query, data=request.data)
+        serializer = ProjectSerializer(query, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST, data={'error': 'Invalid data'})
-    except Project.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND, data={'error': 'Project not found'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
