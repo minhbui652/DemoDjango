@@ -18,4 +18,5 @@
  - Sử dụng serializer để validate dữ liệu đầu vào
 ## Authentication:
  - Sử dụng token authentication để xác thực người dùng
- - Sử dụng permission để phân quyền cho người dùng
+## Pagination:
+ - Sử dụng pagination để phân trang dữ liệu

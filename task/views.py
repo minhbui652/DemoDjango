@@ -1,32 +1,44 @@
 from django.core.serializers import serialize
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models.Assign import Assign
 from .models.Project import Project
 from .models.Task import Task
 from .serializers import ProjectSerializer, TaskSerializer
-
-# Create your views here.
-# class ProjectViewSet(viewsets.ModelViewSet):  # ReadOnly nếu chỉ GET
-#     """
-#     API endpoint that allows projects to be viewed.
-#     """
-#     queryset = Project.objects.all()
-#     serializer_class = ProjectSerializer
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 '''
 CRUD Project với function-based view (FBV)
 '''
 @api_view(['GET'])
-def get_all(reqest):
+@authentication_classes([])
+@permission_classes([AllowAny])
+def get_all(request):
     try:
-        query = Project.objects.all()
-        serializer = ProjectSerializer(query, many=True, context={'request': reqest})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        project = Project.objects.filter(
+            Q(title__icontains=request.query_params.get('keyword', '')) |
+            Q(description__icontains=request.query_params.get('keyword', ''))
+        ).all()
+
+        page_size = int(request.query_params.get('page_size', 10))  # Mặc định là 2 items mỗi trang
+        p = Paginator(project, page_size)
+        page_number = request.query_params.get('page', 1)
+        result = p.get_page(page_number)
+        serializer = ProjectSerializer(result, many=True, context={'request': request})
+        response = {
+            'count': p.count,
+            'total_pages': p.num_pages,
+            'current_page': result.number,
+            'page_size': page_size,
+            'results': serializer.data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 
@@ -53,6 +65,7 @@ def create(request):
         if serialize.is_valid():
             serialize.save()
             return Response(serialize.data, status=status.HTTP_201_CREATED)
+        return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data={'error': str(e)})
 

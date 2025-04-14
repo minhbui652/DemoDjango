@@ -27,8 +27,9 @@ router.register('assign', AssignViewSet, basename='assign')
 router.register('auth', AuthViewSet, basename='auth')
 
 urlpatterns = [
-    # project api using function-based view
     path('admin/', admin.site.urls),
+
+    # project api using function-based view
     path('api/project/getAll', get_all),
     path('api/project/getById/<int:id>', get_by_id),
     path('api/project/create', create),
