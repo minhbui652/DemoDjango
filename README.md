@@ -20,3 +20,7 @@
  - Sử dụng token authentication để xác thực người dùng
 ## Pagination:
  - Sử dụng pagination để phân trang dữ liệu
+## Swagger:
+- Sử dụng drf-yasg để test api với swagger
+## DATABASE:
+- Kết nối database với sqlserver, mysql, sqlite, postgresql

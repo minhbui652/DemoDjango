@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Utils',
     'rest_framework_simplejwt',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -96,19 +97,36 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
 
+    # 'default': {
+    #     'ENGINE': 'mssql',
+    #     'NAME': env('DATABASE_NAME'),
+    #     'USER': env('SQL_SERVER_DATABASE_USER'),
+    #     'PASSWORD': env('SQL_SERVER_DATABASE_PASSWORD'),
+    #     'HOST': 'localhost',
+    #     'OPTIONS': {
+    #         'driver': 'ODBC Driver 17 for SQL Server',
+    #     },
+    # }
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': env('POSTGRES_DATABASE_NAME'),
+    #     'USER': env('POSTGRES_DATABASE_USER'),
+    #     'PASSWORD': env('POSTGRES_DATABASE_PASSWORD'),
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
+
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('MYSQL_DATABASE_NAME'),
+        'USER': env('MYSQL_DATABASE_USER'),
+        'PASSWORD': env('MYSQL_DATABASE_PASSWORD'),
         'HOST': 'localhost',
-        # 'PORT': '',
+        'PORT': '3306',
         'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            # 'autocommit': True,
-            # 'trusted_connection': 'yes',
-            # 'extra_params': 'TrustServerCertificate=yes;'
-        },
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
 
@@ -158,7 +176,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DAFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 SIMPLE_JWT = {
